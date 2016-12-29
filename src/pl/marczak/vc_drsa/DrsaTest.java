@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Łukasz Marczak on 2016-12-29.
  */
-public class TestUnion {
+public class DrsaTest {
 
     public static void main(String[] args) {
 
@@ -76,21 +76,19 @@ public class TestUnion {
         s8_attrs.add(new Attribute("Comprehensive evaluation", 0));
         students.add(new DRSAObject("S8").withAttributes(s8_attrs));
 
-        List<DRSAObject> dominating =
-                new RoughApproximation(RoughApproximation.Kind.PLUS, S1)
-                        .fromDataset(students)
-                        .ofAttributes("Mathematics", "Physics")
-                        .evaluate();
+
+        DominanceClass dominanceClass = new DominanceClass(S1)
+                .fromDataset(students)
+                .ofAttributes("Mathematics", "Physics");
+
+        List<DRSAObject> dominating = dominanceClass.dominating();
+
         for (DRSAObject object : dominating) {
             System.out.println("S1 dominates " + object);
         }
 
-        List<DRSAObject> dominated =
-                new RoughApproximation(RoughApproximation.Kind.MINUS, S1)
-                        .fromDataset(students)
-                        .fromDataset(students)
-                        .ofAttributes("Mathematics", "Physics")
-                        .evaluate();
+        List<DRSAObject> dominated = dominanceClass.dominated();
+
         for (DRSAObject object : dominated) {
             System.out.println("S1 is dominated by " + object);
         }

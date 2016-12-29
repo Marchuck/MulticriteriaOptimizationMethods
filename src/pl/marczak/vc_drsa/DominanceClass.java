@@ -7,9 +7,11 @@ import java.util.List;
 /**
  * Created by Łukasz Marczak on 2016-12-29.
  */
-public class RoughApproximation {
+public class DominanceClass {
 
-    private final Kind kind;
+    public static final int DOMINATING = 1;
+    public static final int DOMINATED = -1;
+
     private final DRSAObject candidate;
 
     private List<String> attributeNames = new ArrayList<>();
@@ -19,34 +21,37 @@ public class RoughApproximation {
     private List<DRSAObject> evaluatedObjects = new ArrayList<>();
 
 
-    public RoughApproximation(Kind kind, DRSAObject candidate) {
-        this.kind = kind;
+    public DominanceClass(DRSAObject candidate) {
         this.candidate = candidate;
     }
 
-    public RoughApproximation fromDataset(List<DRSAObject> dataset) {
+    public DominanceClass fromDataset(List<DRSAObject> dataset) {
         this.dataset = dataset;
         return this;
     }
 
 
-    public RoughApproximation ofAttributes(String... attributeNames) {
+    public DominanceClass ofAttributes(String... attributeNames) {
         return ofAttributes(Arrays.asList(attributeNames));
     }
 
-    public RoughApproximation ofAttributes(List<String> attributeNames) {
+    public DominanceClass ofAttributes(List<String> attributeNames) {
         this.attributeNames = attributeNames;
         return this;
     }
 
-    public List<DRSAObject> evaluate() {
-
+    public List<DRSAObject> dominating() {
         evaluatedObjects.clear();
-
-        evaluate(kind == Kind.PLUS ? 1 : -1);
-
+        evaluate(DOMINATING);
         return evaluatedObjects;
     }
+
+    public List<DRSAObject> dominated() {
+        evaluatedObjects.clear();
+        evaluate(DOMINATED);
+        return evaluatedObjects;
+    }
+
 
 
     private void evaluate(int compareValue) {
@@ -63,10 +68,4 @@ public class RoughApproximation {
             }
         }
     }
-
-    public enum Kind {
-        PLUS, MINUS
-    }
-
-
 }
