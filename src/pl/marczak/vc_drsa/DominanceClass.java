@@ -53,7 +53,6 @@ public class DominanceClass {
     }
 
 
-
     private void evaluate(int compareValue) {
 
         for (DRSAObject object : dataset) {
