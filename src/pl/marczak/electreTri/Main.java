@@ -11,8 +11,10 @@ public class Main {
     public static Comparision[][] comparisionTable;
     public static Data data;
 
-    public static void main(String[] args) {
+
+    public static void  main(String[] args) {
         data = new Data();
+
 
         System.out.print("Mamy " + data.cryterias.keySet().size() + " kryteriów");
         System.out.println(" ," + data.profiles.keySet().size() + " profili");

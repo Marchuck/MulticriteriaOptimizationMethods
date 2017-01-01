@@ -11,6 +11,7 @@ public class CriterionClass {
     public CriterionClass(double[] values) {
         this.values = values;
     }
+
     public static List<CriterionClass> createProblemFrom(MCDAProblem problem){
 
         CriteriaClassBuilder classBuilder = new CriteriaClassBuilder(problem.critera);

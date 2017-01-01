@@ -7,5 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="rxjava-2.0.0-RC1" level="project" />
+    <orderEntry type="library" name="rxjava-reactive-streams-1.2.1" level="project" />
+    <orderEntry type="library" name="rxjava-1.0.2" level="project" />
   </component>
 </module>
