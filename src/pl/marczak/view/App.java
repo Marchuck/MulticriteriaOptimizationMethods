@@ -11,10 +11,8 @@ package pl.marczak.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import rx.Observable;
@@ -43,6 +41,8 @@ public class App extends Application implements AppCallbacks {
     Label separatorName;
     TextField separator;
 
+    TextArea filePreview;
+
     Button runElectreButton;
 
     Button runVCDRSAButton;
@@ -67,22 +67,7 @@ public class App extends Application implements AppCallbacks {
                     double[] weights = null;
                     lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
                     return false;
-                }).subscribe(new Subscriber<Boolean>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-
-            }
-        });
+                }).subscribe();
 
         Observable.zip(fileSubject,
                 lastPropertiesSubject,
@@ -90,22 +75,7 @@ public class App extends Application implements AppCallbacks {
                 (file, bundle, clicked) -> {
                     presenter.onElectreTriChosen(file, bundle);
                     return true;
-                }).subscribe(new Subscriber<Boolean>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-
-            }
-        });
+                }).subscribe();
 
     }
 
@@ -117,6 +87,7 @@ public class App extends Application implements AppCallbacks {
         VBox box = new VBox();
 
         addInputFileButton(primaryStage, box);
+        addTextPreview(box);
         addProgressBar(primaryStage, box);
         addSeparatorAndRunButton(box);
         root.setCenter(box);
@@ -125,6 +96,13 @@ public class App extends Application implements AppCallbacks {
 
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
+    }
+
+    private void addTextPreview(VBox box) {
+        filePreview = new TextArea("");
+        filePreview.setPrefWidth(300);
+        filePreview.setPrefWidth(200);
+        box.getChildren().add(filePreview);
     }
 
     private void addSeparatorAndRunButton(Pane pane) {
@@ -160,13 +138,14 @@ public class App extends Application implements AppCallbacks {
     private void addInputFileButton(Stage primaryStage, Pane parent) {
         fileChooseButton = new Button();
         fileChosenLabel = new Label("");
-        fileChooseButton.setText("Open input file");
+        fileChooseButton.setText("Open file");
         fileChooseButton.setOnAction(event -> {
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open input data");
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
+                filePreview.setText(presenter.getFirstFewLines(file));
                 fileChosenLabel.setText(file.getAbsolutePath());
                 fileSubject.onNext(file);
             }

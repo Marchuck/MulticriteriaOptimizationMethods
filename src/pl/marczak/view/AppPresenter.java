@@ -1,9 +1,6 @@
 package pl.marczak.view;
 
-import MCDA.definitions.Alternative;
-import MCDA.definitions.CriterionDefinition;
-import MCDA.definitions.CriterionValue;
-import MCDA.definitions.DataReader;
+import MCDA.definitions.*;
 import MCDA.methods.outranking.ElectreTri;
 import javafx.util.Pair;
 
@@ -84,20 +81,16 @@ public class AppPresenter {
 
         List<Alternative> alternatives = alternativeDataReader.read(file, (line, index) -> {
 
+            System.out.println("parsing line: " + line);
+
             String[] values = line.split(separator);
-
             Alternative alternative = new Alternative("S" + index);
-
             String[] attributeNames = alternativeDataReader.getPropertyNames(separator, values.length);
 
             for (int i = 0; i < values.length; i++) {
-
                 CriterionDefinition criterionDefinition = new CriterionDefinition(attributeNames[i], null, weights[i], null);
-
-                double criterionDefinitionValue = Double.parseDouble(values[i].replace(", ", "."));
-
+                double criterionDefinitionValue = Double.parseDouble(values[i].replace(",", "."));
                 CriterionValue criterionValue = new CriterionValue(criterionDefinition, criterionDefinitionValue);
-
                 alternative.addCriterion(criterionValue);
             }
             return alternative;
@@ -110,13 +103,18 @@ public class AppPresenter {
         int secondIndex = random.nextInt(size);
         profiles.add(alternatives.get(firstIndex));
         profiles.add(alternatives.get(secondIndex));
+        profiles.add(alternatives.get((alternatives.size() / 2)));
 
         ElectreTri electreTri = new ElectreTri(alternatives, profiles);
         electreTri.solve();
-        electreTri.getResult();
+        System.out.println("Result: " + MCDACommons.printCollection(electreTri.getResult()));
     }
 
     public void onVCDRSAChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip) {
         throw new UnsupportedOperationException("not yet implemented!");
+    }
+
+    public String getFirstFewLines(File file) {
+        return DataReader.getAFewLinesOnly(file, 5);
     }
 }

@@ -2,6 +2,8 @@ package MCDA.definitions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOError;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -72,6 +74,24 @@ public class DataReader<T> {
 
     public String getFirstLine() {
         return firstLine;
+    }
+
+
+    public static String getAFewLinesOnly(File file, int linesCount) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Scanner input = null;
+        try {
+            input = new Scanner(file);
+            while (input.hasNextLine() && --linesCount > -1) {
+                stringBuilder.append(input.nextLine()).append("\n");
+            }
+
+        } catch (FileNotFoundException x) {
+
+        } finally {
+            if (input != null) input.close();
+        }
+        return stringBuilder.toString();
     }
 
     public DataReader(boolean _shouldSkipFirstLine) {

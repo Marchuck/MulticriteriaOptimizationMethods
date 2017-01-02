@@ -16,8 +16,8 @@ public class MCDACommons {
         return collection == null || collection.isEmpty();
     }
 
-    public static <T> boolean anyEmpty(Collection<T>... collections) {
-        for (Collection<T> c : collections) {
+    public static boolean anyEmpty(Collection<?>... collections) {
+        for (Collection<?> c : collections) {
             if (c.isEmpty()) return true;
         }
         return false;
