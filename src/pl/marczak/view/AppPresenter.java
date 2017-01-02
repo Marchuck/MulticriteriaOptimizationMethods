@@ -74,25 +74,32 @@ public class AppPresenter {
 
         boolean shouldSkipFirstLine = electreBundle.firstLineSkip;
 
-        double[] weights = electreBundle.weights;
-
+        double[] weights = null;
 
         DataReader<Alternative> alternativeDataReader = new DataReader<>(shouldSkipFirstLine);
 
         List<Alternative> alternatives = alternativeDataReader.read(file, (line, index) -> {
 
-            System.out.println("parsing line: " + line);
+            System.out.println("parsing line: " + line + " with separator \"" + separator + "\"");
 
             String[] values = line.split(separator);
+            System.out.println("There are " + values.length + " items");
             Alternative alternative = new Alternative("S" + index);
             String[] attributeNames = alternativeDataReader.getPropertyNames(separator, values.length);
 
+            System.out.println("There are " + attributeNames.length + " items");
+            if (values.length != attributeNames.length) throw new IllegalStateException("cannot happen!!!");
             for (int i = 0; i < values.length; i++) {
-                CriterionDefinition criterionDefinition = new CriterionDefinition(attributeNames[i], null, weights[i], null);
-                double criterionDefinitionValue = Double.parseDouble(values[i].replace(",", "."));
+                CriterionDefinition criterionDefinition =
+                        new CriterionDefinition(attributeNames[i], null, 1.0d / attributeNames.length, null);
+
+                String doubleValue = values[i].replace(",", ".").trim();
+                System.out.println(doubleValue);
+                double criterionDefinitionValue = Double.parseDouble(doubleValue);
                 CriterionValue criterionValue = new CriterionValue(criterionDefinition, criterionDefinitionValue);
                 alternative.addCriterion(criterionValue);
             }
+            System.out.println("created new alternative");
             return alternative;
         });
 

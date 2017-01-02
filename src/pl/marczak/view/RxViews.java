@@ -2,12 +2,12 @@ package pl.marczak.view;
 
 
 import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import rx.Observable;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Łukasz Marczak on 2017-01-01.
@@ -18,8 +18,10 @@ public class RxViews {
         return Observable.create(observableEmitter -> {
 
             ChangeListener<? super Boolean> listener = (ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                if (oldValue.booleanValue() != newValue.booleanValue())
+                if (oldValue.booleanValue() != newValue.booleanValue()) {
+                    System.out.println("onNext -> " + newValue + "checkBox change!");
                     observableEmitter.onNext(newValue);
+                }
             };
             checkBox.selectedProperty().addListener(listener);
 
@@ -30,20 +32,27 @@ public class RxViews {
         });
     }
 
-    public static Observable<Boolean> clicks(Button button) {
+    public static Observable<Object> clicks(Button button) {
         return Observable.create(observableEmitter -> {
-            EventHandler<ActionEvent> eventHandler = event -> observableEmitter.onNext(true);
-            button.setOnAction(eventHandler);
+
+            button.setOnAction(event -> {
+                System.out.println("onNext -> click!");
+
+                observableEmitter.onNext(new Object());
+            });
 //            observableEmitter.setCancellable(() -> button.setOnAction(null));
-        });
+        }).throttleFirst(1, TimeUnit.SECONDS);
     }
 
     public static Observable<String> textChanges(TextField textField) {
         return Observable.create(observableEmitter -> {
-            ChangeListener<String> listener = (observable, oldValue, newValue) -> {
-                if (!oldValue.contentEquals(newValue)) observableEmitter.onNext(newValue);
-            };
-            textField.textProperty().addListener(listener);
+
+            textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (!oldValue.contentEquals(newValue)) {
+                    System.out.println("onNext -> \"" + newValue + "\" text change");
+                    observableEmitter.onNext(newValue);
+                }
+            });
 //            observableEmitter.setCancellable(() -> textField.textProperty().removeListener(listener));
         });
     }

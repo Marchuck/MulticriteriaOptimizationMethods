@@ -83,7 +83,7 @@ public class ElectreTri implements Solver {
             double alternativeValue = alternative.value();
 
             for (int j = 0; j < profiles.size(); j++) {
-                Alternative profile = profiles.get(i);
+                Alternative profile = profiles.get(j);
                 double profileValue = profile.value();
 
                 comparisonTable[i][j] = Double.compare(alternativeValue, profileValue);

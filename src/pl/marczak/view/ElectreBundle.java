@@ -1,5 +1,7 @@
 package pl.marczak.view;
 
+import java.util.Arrays;
+
 /**
  * MulticriteriaOptimizationMethods
  *
@@ -16,5 +18,15 @@ public class ElectreBundle {
         this.separator = separator;
         this.firstLineSkip = firstLineSkip;
         this.weights = weights;
+        System.out.print(this);
+    }
+
+    @Override
+    public String toString() {
+        return "ElectreBundle{" +
+                "separator='" + separator + '\'' +
+                ", firstLineSkip=" + firstLineSkip +
+                ", weights=" + Arrays.toString(weights) +
+                '}';
     }
 }

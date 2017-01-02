@@ -11,12 +11,13 @@ package pl.marczak.view;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import rx.Observable;
-import rx.Subscriber;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 
@@ -59,23 +60,33 @@ public class App extends Application implements AppCallbacks {
 
         presenter = new AppPresenter(this);
 
-        lastPropertiesSubject.onNext(new ElectreBundle(",", true, null));
+        Observable.combineLatest(RxViews.textChanges(separator),
+                RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
 
-        Observable.combineLatest(
-                RxViews.textChanges(separator), RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
-
-                    double[] weights = null;
+                    double[] weights = new double[15];
                     lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
                     return false;
-                }).subscribe();
+                }).subscribe(boo -> {
+        }, err -> System.out.println("Combine latest error: " + String.valueOf(err)));
 
-        Observable.zip(fileSubject,
+        Observable.combineLatest(fileSubject,
                 lastPropertiesSubject,
                 RxViews.clicks(runElectreButton),
                 (file, bundle, clicked) -> {
                     presenter.onElectreTriChosen(file, bundle);
-                    return true;
-                }).subscribe();
+                    return new Object();
+                })
+                .subscribe(a -> {
+                            System.out.println("done");
+                        },
+                        throwable -> {
+                            System.err.println("zip error: " + throwable.getMessage());
+                            throwable.printStackTrace();
+                        });
+
+        lastPropertiesSubject.onNext(new ElectreBundle(",", true, null));
+        firstLineCheckBox.selectedProperty().setValue(false);
+        separator.setText(",");
 
     }
 

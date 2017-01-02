@@ -1,10 +1,13 @@
 package MCDA.definitions;
 
+import jdk.nashorn.internal.objects.NativeUint8Array;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,13 +20,14 @@ public class DataReader<T> {
     boolean shouldSkipFirstLine;
 
 
-    String firstLine = "";
+    String firstLine;
 
 
     String[] propertyNames;
 
 
     public String[] getPropertyNames(String separator, int numberOfProperties) {
+        System.out.println("getPropertyNames");
         return getPropertyNamesByLazy(separator, numberOfProperties);
     }
 
@@ -34,15 +38,18 @@ public class DataReader<T> {
 
     String[] getPropertyNamesByLazyImpl(String separator, int numberOfProperties) {
 
+        String arr[];
         if (hasFirstLine()) {
-            return firstLine.split(separator);
+            arr = firstLine.split(separator);
         } else {
             String[] properties = new String[numberOfProperties];
             for (int i = 0; i < numberOfProperties; i++) {
                 properties[i] = generatePropertyId(i, numberOfProperties);
             }
-            return properties;
+            arr = properties;
         }
+        System.out.println("property names: " + Arrays.toString(arr));
+        return arr;
     }
 
     public static void main(String[] args) {
@@ -121,7 +128,7 @@ public class DataReader<T> {
                 list.add(readStrategy.read(nextLine, newLineIndex));
                 newLineIndex++;
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.err.println("Error! " + e.getMessage());
             e.printStackTrace();
         } finally {
