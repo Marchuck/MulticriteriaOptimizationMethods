@@ -8,9 +8,21 @@ import java.util.Iterator;
  */
 public class MCDACommons {
 
+//    public static <T> boolean isEmpty(Collection<T> collection) {
+//        return collection == null || collection.isEmpty();
+//    }
+
     public static <T> boolean isEmpty(Collection<T> collection) {
         return collection == null || collection.isEmpty();
     }
+
+    public static <T> boolean anyEmpty(Collection<T>... collections) {
+        for (Collection<T> c : collections) {
+            if (c.isEmpty()) return true;
+        }
+        return false;
+    }
+
 
     public static <T> String printCollection(Collection<T> collection) {
         if (isEmpty(collection)) return "[]";

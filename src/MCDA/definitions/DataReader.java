@@ -1,13 +1,10 @@
-package MCDA.methods.outranking;
-
-import pl.marczak.electreTri.Data;
+package MCDA.definitions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.StringJoiner;
 
 /**
  * Created by Łukasz Marczak on 2017-01-01.
@@ -24,12 +21,16 @@ public class DataReader<T> {
     String[] propertyNames;
 
 
+    public String[] getPropertyNames(String separator, int numberOfProperties) {
+        return getPropertyNamesByLazy(separator, numberOfProperties);
+    }
+
     public String[] getPropertyNamesByLazy(String separator, int numberOfProperties) {
-        if (propertyNames == null) propertyNames = getPropertyNames(separator, numberOfProperties);
+        if (propertyNames == null) propertyNames = getPropertyNamesByLazyImpl(separator, numberOfProperties);
         return propertyNames;
     }
 
-    String[] getPropertyNames(String separator, int numberOfProperties) {
+    String[] getPropertyNamesByLazyImpl(String separator, int numberOfProperties) {
 
         if (hasFirstLine()) {
             return firstLine.split(separator);
@@ -108,6 +109,5 @@ public class DataReader<T> {
         }
         return list;
     }
-
 
 }

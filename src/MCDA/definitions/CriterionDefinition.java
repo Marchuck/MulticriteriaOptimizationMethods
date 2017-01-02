@@ -15,4 +15,9 @@ public class CriterionDefinition {
         this.weight = weight;
         this.thresholds = thresholds;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

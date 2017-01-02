@@ -11,6 +11,8 @@ public class Alternative {
 
     public int ranking;
 
+    public double value;
+
     private List<CriterionValue> criteriaValues = new ArrayList<>();
 
     public Alternative(String name) {
@@ -21,12 +23,22 @@ public class Alternative {
         criteriaValues.add(value);
     }
 
+
+    public double value() {
+        double value = 0;
+        for (CriterionValue v : criteriaValues) {
+            value += v.value * v.criterion.weight;
+        }
+
+        return value;
+    }
+
     public List<CriterionValue> getCriteria() {
         return criteriaValues;
     }
 
     @Override
     public String toString() {
-        return "{ name= " + name + ", criteriaValues= " + MCDACommons.printCollection(criteriaValues) + " }";
+        return "{ name= " + name + ",value=" + value + ",ranking=" + ranking + " criteriaValues= " + MCDACommons.printCollection(criteriaValues) + " }";
     }
 }

@@ -3,13 +3,14 @@ package pl.marczak.view;
 import MCDA.definitions.Alternative;
 import MCDA.definitions.CriterionDefinition;
 import MCDA.definitions.CriterionValue;
-import MCDA.definitions.OptimizationDirection;
-import MCDA.methods.outranking.DataReader;
+import MCDA.definitions.DataReader;
+import MCDA.methods.outranking.ElectreTri;
 import javafx.util.Pair;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Queues
@@ -68,32 +69,51 @@ public class AppPresenter {
         }
     }
 
-    public void onElectreTriChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip, List<Boolean> optimizationDirections) {
+    public void onElectreTriChosen(File file, ElectreBundle electreBundle) {
         System.out.println("onElectreTriChosen");
-        String separator = separatorAndFirstLineSkip.getKey();
-        boolean shouldSkipFirstLine = separatorAndFirstLineSkip.getValue();
+
+
+        String separator = electreBundle.separator;
+
+        boolean shouldSkipFirstLine = electreBundle.firstLineSkip;
+
+        double[] weights = electreBundle.weights;
+
 
         DataReader<Alternative> alternativeDataReader = new DataReader<>(shouldSkipFirstLine);
 
         List<Alternative> alternatives = alternativeDataReader.read(file, (line, index) -> {
 
             String[] values = line.split(separator);
+
             Alternative alternative = new Alternative("S" + index);
-            String[] attributeNames = alternativeDataReader.getPropertyNamesByLazy(separator, values.length);
+
+            String[] attributeNames = alternativeDataReader.getPropertyNames(separator, values.length);
+
             for (int i = 0; i < values.length; i++) {
-                OptimizationDirection direction = optimizationDirections.get(i) ?
-                        OptimizationDirection.MAXIMIZE : OptimizationDirection.MINIMIZE;
-                CriterionDefinition criterionDefinition = new CriterionDefinition(attributeNames[i], direction, 0, null);
-                double criterionDefinitionValue = 0;
+
+                CriterionDefinition criterionDefinition = new CriterionDefinition(attributeNames[i], null, weights[i], null);
+
+                double criterionDefinitionValue = Double.parseDouble(values[i].replace(", ", "."));
+
                 CriterionValue criterionValue = new CriterionValue(criterionDefinition, criterionDefinitionValue);
 
                 alternative.addCriterion(criterionValue);
             }
-
             return alternative;
         });
 
+        List<Alternative> profiles = new ArrayList<>();
+        int size = alternatives.size();
+        Random random = new Random();
+        int firstIndex = random.nextInt(size);
+        int secondIndex = random.nextInt(size);
+        profiles.add(alternatives.get(firstIndex));
+        profiles.add(alternatives.get(secondIndex));
 
+        ElectreTri electreTri = new ElectreTri(alternatives, profiles);
+        electreTri.solve();
+        electreTri.getResult();
     }
 
     public void onVCDRSAChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip) {

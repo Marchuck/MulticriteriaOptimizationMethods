@@ -17,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import rx.Observable;
 import rx.Subscriber;
 import rx.subjects.BehaviorSubject;
@@ -48,7 +47,7 @@ public class App extends Application implements AppCallbacks {
 
     Button runVCDRSAButton;
 
-    Subject<Pair<String, Boolean>, Pair<String, Boolean>> lastPropertiesSubject = BehaviorSubject.create();
+    Subject<ElectreBundle, ElectreBundle> lastPropertiesSubject = BehaviorSubject.create();
 
     Subject<File, File> fileSubject = BehaviorSubject.create();
 
@@ -60,13 +59,13 @@ public class App extends Application implements AppCallbacks {
 
         presenter = new AppPresenter(this);
 
-        lastPropertiesSubject.onNext(new Pair<>(",", true));
+        lastPropertiesSubject.onNext(new ElectreBundle(",", true, null));
 
         Observable.combineLatest(
                 RxViews.textChanges(separator), RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
 
-                    Pair<String, Boolean> pair = new Pair<>(lastSeparator, firstLineSkipped);
-                    lastPropertiesSubject.onNext(pair);
+                    double[] weights = null;
+                    lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
                     return false;
                 }).subscribe(new Subscriber<Boolean>() {
             @Override
@@ -88,8 +87,8 @@ public class App extends Application implements AppCallbacks {
         Observable.zip(fileSubject,
                 lastPropertiesSubject,
                 RxViews.clicks(runElectreButton),
-                (file, separatorAndFirstLineSkip, clicked) -> {
-                    presenter.onElectreTriChosen(file, separatorAndFirstLineSkip);
+                (file, bundle, clicked) -> {
+                    presenter.onElectreTriChosen(file, bundle);
                     return true;
                 }).subscribe(new Subscriber<Boolean>() {
             @Override
@@ -137,7 +136,9 @@ public class App extends Application implements AppCallbacks {
         separatorName = new Label("separator");
         separator = new TextField(",");
 
-        HBox hbox = new HBox(separatorName, separator);
+        HBox hbox = new HBox();
+        hbox.getChildren().add(separatorName);
+        hbox.getChildren().add(separator);
 
         pane.getChildren().add(hbox);
 
@@ -170,7 +171,9 @@ public class App extends Application implements AppCallbacks {
                 fileSubject.onNext(file);
             }
         });
-        HBox hBox = new HBox(fileChooseButton, fileChosenLabel);
+        HBox hBox = new HBox();
+        hBox.getChildren().add(fileChooseButton);
+        hBox.getChildren().add(fileChosenLabel);
         parent.getChildren().add(hBox);
     }
 
@@ -211,11 +214,11 @@ public class App extends Application implements AppCallbacks {
     @Override
     public void showError(String errorMsg) {
         System.out.println("Error occurred");
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("WTF");
+//        Alert alert = new Alert(Alert.AlertType.ERROR);
+//        alert.setTitle("WTF");
 //        alert.setHeaderText("Error occurred");
-        alert.setContentText(errorMsg);
-        alert.showAndWait();
+//        alert.setContentText(errorMsg);
+//        alert.showAndWait();
     }
 
     @Override
