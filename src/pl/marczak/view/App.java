@@ -132,7 +132,7 @@ public class App extends Application implements AppCallbacks {
         pane.getChildren().add(hbox);
 
         runElectreButton = new Button("Run Electre");
-        runVCDRSAButton = new Button("Run DRSA");
+        runVCDRSAButton = new Button("Run VCDRSA");
         pane.getChildren().add(runElectreButton);
         pane.getChildren().add(runVCDRSAButton);
 

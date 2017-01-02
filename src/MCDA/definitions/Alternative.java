@@ -33,6 +33,10 @@ public class Alternative {
         return value;
     }
 
+    public void setCriteriaValues(List<CriterionValue> criteriaValues) {
+        this.criteriaValues = criteriaValues;
+    }
+
     public List<CriterionValue> getCriteria() {
         return criteriaValues;
     }
