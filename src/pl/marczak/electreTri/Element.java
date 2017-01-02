@@ -28,6 +28,5 @@ public class Element {
         for (Long crId : cryterias.keySet()) {
             value += cryterias.get(crId).weight*data.get(crId.intValue());
         }
-        int a = 3;
     }
 }

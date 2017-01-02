@@ -49,8 +49,5 @@ public class Data {
         alternatives.put(2L, e3);
         Element e4 = new Element(cryterias, Arrays.asList(1d, 1d, 2d, 1d, 1d));
         alternatives.put(3L, e4);
-
-
     }
-
 }
