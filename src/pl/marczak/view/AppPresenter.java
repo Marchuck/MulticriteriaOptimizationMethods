@@ -1,6 +1,9 @@
 package pl.marczak.view;
 
 import MCDA.definitions.Alternative;
+import MCDA.definitions.CriterionDefinition;
+import MCDA.definitions.CriterionValue;
+import MCDA.definitions.OptimizationDirection;
 import MCDA.methods.outranking.DataReader;
 import javafx.util.Pair;
 
@@ -15,7 +18,7 @@ import java.util.List;
  * @since 30 gru 2016.
  * 14 : 11
  */
-public class GuiPresenter {
+public class AppPresenter {
 
     final AppCallbacks appCallbacks;
 
@@ -33,7 +36,7 @@ public class GuiPresenter {
         }
     };
 
-    public GuiPresenter(AppCallbacks connector) {
+    public AppPresenter(AppCallbacks connector) {
         this.appCallbacks = connector;
 
         //showMockProgressBar();
@@ -65,17 +68,32 @@ public class GuiPresenter {
         }
     }
 
-    public void onElectreTriChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip) {
+    public void onElectreTriChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip, List<Boolean> optimizationDirections) {
         System.out.println("onElectreTriChosen");
         String separator = separatorAndFirstLineSkip.getKey();
         boolean shouldSkipFirstLine = separatorAndFirstLineSkip.getValue();
 
-        DataReader<Alternative> alternativeDataReader = new DataReader<>(shouldSkipFirstLine, line -> {
-            String[] props = line.split(separator);
-            Alternative alternative = new Alternative("");
+        DataReader<Alternative> alternativeDataReader = new DataReader<>(shouldSkipFirstLine);
+
+        List<Alternative> alternatives = alternativeDataReader.read(file, (line, index) -> {
+
+            String[] values = line.split(separator);
+            Alternative alternative = new Alternative("S" + index);
+            String[] attributeNames = alternativeDataReader.getPropertyNamesByLazy(separator, values.length);
+            for (int i = 0; i < values.length; i++) {
+                OptimizationDirection direction = optimizationDirections.get(i) ?
+                        OptimizationDirection.MAXIMIZE : OptimizationDirection.MINIMIZE;
+                CriterionDefinition criterionDefinition = new CriterionDefinition(attributeNames[i], direction, 0, null);
+                double criterionDefinitionValue = 0;
+                CriterionValue criterionValue = new CriterionValue(criterionDefinition, criterionDefinitionValue);
+
+                alternative.addCriterion(criterionValue);
+            }
+
             return alternative;
         });
-        List<Alternative> alternatives = alternativeDataReader.read(file);
+
+
     }
 
     public void onVCDRSAChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip) {

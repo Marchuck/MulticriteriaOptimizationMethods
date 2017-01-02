@@ -26,6 +26,9 @@ public class ElectreTri implements Solver {
     }
 
     public static void main(String[] args) {
+
+
+
         ElectreTri electreTri = new ElectreTri();
 
         List<Alternative> alternatives = new ArrayList<>();

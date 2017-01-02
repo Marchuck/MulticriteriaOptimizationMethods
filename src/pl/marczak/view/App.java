@@ -31,7 +31,7 @@ public class App extends Application implements AppCallbacks {
         launch(args);
     }
 
-    GuiPresenter presenter;
+    AppPresenter presenter;
 
     ProgressBar progressIndicator;
 
@@ -49,6 +49,7 @@ public class App extends Application implements AppCallbacks {
     Button runVCDRSAButton;
 
     Subject<Pair<String, Boolean>, Pair<String, Boolean>> lastPropertiesSubject = BehaviorSubject.create();
+
     Subject<File, File> fileSubject = BehaviorSubject.create();
 
     @Override
@@ -57,7 +58,7 @@ public class App extends Application implements AppCallbacks {
 
         setupViews(primaryStage);
 
-        presenter = new GuiPresenter(this);
+        presenter = new AppPresenter(this);
 
         lastPropertiesSubject.onNext(new Pair<>(",", true));
 
