@@ -51,10 +51,6 @@ public class App extends Application implements AppCallbacks {
 
     Button runVCDRSAButton;
 
-//    Subject<ElectreBundle, ElectreBundle> lastPropertiesSubject = BehaviorSubject.create();
-
-//    Subject<File, File> fileSubject = BehaviorSubject.create();
-
     File currentFile = null;
     double[] currentWeights = null;
 
@@ -66,15 +62,6 @@ public class App extends Application implements AppCallbacks {
 
         presenter = new AppPresenter(this);
 
-//        Observable.combineLatest(RxViews.textChanges(separator),
-//                RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
-//
-//                    double[] weights = new double[15];
-//                    lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
-//                    return false;
-//                }).subscribe(boo -> {
-//        }, err -> System.out.println("Combine latest error: " + String.valueOf(err)));
-
         runElectreButton.setOnAction((event) -> {
             if (currentFile == null) {
                 showSelectFileFirstDialog();
@@ -82,9 +69,10 @@ public class App extends Application implements AppCallbacks {
             }
             String separatorValue = separator.getText();
             boolean firstLineSkipped = firstLineCheckBox.isSelected();
-
-            new ElectreResultsDialog(ElectreTri.demo());
-            // presenter.onElectreTriChosen(currentFile, new ElectreBundle(separatorValue, firstLineSkipped, currentWeights));
+            ElectreTri electreTri = ElectreTri.demo();
+            electreTri.solve();
+            electreTri.solve();
+            electreTri.solve();
 
         });
 
@@ -110,7 +98,11 @@ public class App extends Application implements AppCallbacks {
         addTextPreview(box);
         addProgressBar(box);
         addSeparatorAndRunButton(box);
+
+        new ElectreResultsDialog(box, ElectreTri.demo());
+
         root.setCenter(box);
+
 
         primaryStage.setTitle("Multicriteria optimization methods");
 
@@ -141,13 +133,12 @@ public class App extends Application implements AppCallbacks {
         pane.getChildren().add(hbox);
 
         editWeightsButton = new Button("edit weights");
-        editWeightsButton.setOnAction((value) -> {
-            invokeEditWeightsDialog();
-        });
+        editWeightsButton.setOnAction((x) -> invokeEditWeightsDialog());
         pane.getChildren().add(editWeightsButton);
 
         runElectreButton = new Button("Run Electre");
         runVCDRSAButton = new Button("Run VCDRSA");
+        runVCDRSAButton.setOnAction((x) -> showError("Not yet implemented!"));
         pane.getChildren().add(runElectreButton);
         pane.getChildren().add(runVCDRSAButton);
 
@@ -180,14 +171,8 @@ public class App extends Application implements AppCallbacks {
         fileChooseButton.setText("...");
         fileChooseButton.setOnAction(event -> {
 
-            FileChooser fileChooser = new FileChooser();
-            if (initialDirectoryPath != null) try {
-                fileChooser.setInitialDirectory(initialDirectoryPath);
-            } catch (Exception x) {
+            File file = openFile(primaryStage);
 
-            }
-            fileChooser.setTitle("Open file");
-            File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
                 filePreview.setText(presenter.getFirstFewLines(file));
                 fileChosenLabel.setText(file.getAbsolutePath());
@@ -198,6 +183,21 @@ public class App extends Application implements AppCallbacks {
         hBox.getChildren().add(fileChooseButton);
         hBox.getChildren().add(fileChosenLabel);
         parent.getChildren().add(hBox);
+    }
+
+    private File openFile(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open file");
+        File file;
+        try {
+            if (initialDirectoryPath != null) fileChooser.setInitialDirectory(initialDirectoryPath);
+            file = fileChooser.showOpenDialog(primaryStage);
+        } catch (Exception x) {
+            fileChooser = new FileChooser();
+            fileChooser.setTitle("Open file");
+            file = fileChooser.showOpenDialog(primaryStage);
+        }
+        return file;
     }
 
     @Override

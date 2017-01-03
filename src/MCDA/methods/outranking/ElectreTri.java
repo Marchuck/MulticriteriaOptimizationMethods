@@ -133,10 +133,11 @@ public class ElectreTri {
         int profilesColumns = getColLength(profiles);
         int alternativesRows = getRowLength(alternatives);
 
-
-        System.out.println("alternativesColumns: " + alternativesColumns);
-        System.out.println("profilesColumns: " + profilesColumns);
-        System.out.println("alternativesRows: " + alternativesRows);
+        if (debugEnabled) {
+            System.out.println("alternativesColumns: " + alternativesColumns);
+            System.out.println("profilesColumns: " + profilesColumns);
+            System.out.println("alternativesRows: " + alternativesRows);
+        }
 
         double[][][] c = create3DMatrix(alternativesColumns, profilesColumns, alternativesRows);
         double[][][] d = create3DMatrix(alternativesColumns, profilesColumns, alternativesRows);
@@ -291,7 +292,7 @@ public class ElectreTri {
         }
     }
 
-    private static String elegantDoubleArray(double[] a) {
+    public static String elegantDoubleArray(double[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
         if (iMax == -1)
