@@ -32,14 +32,14 @@ public class DataReader<T> {
     }
 
     public String[] getPropertyNamesByLazy(String separator, int numberOfProperties) {
-        if (propertyNames == null) propertyNames = getPropertyNamesByLazyImpl(separator, numberOfProperties);
+        if (propertyNames == null) propertyNames = getPropertyNamesByLazyImpl(firstLine, separator, numberOfProperties);
         return propertyNames;
     }
 
-    String[] getPropertyNamesByLazyImpl(String separator, int numberOfProperties) {
+    public static String[] getPropertyNamesByLazyImpl(String firstLine, String separator, int numberOfProperties) {
 
         String arr[];
-        if (hasFirstLine()) {
+        if (firstLine != null) {
             arr = firstLine.split(separator);
         } else {
             String[] properties = new String[numberOfProperties];
@@ -55,10 +55,10 @@ public class DataReader<T> {
     public static void main(String[] args) {
         DataReader a = new DataReader<String>(false);
         System.out.println("Properties length: 12");
-        System.out.println("id = 3, name: " + a.generatePropertyId(3, 12));
+        System.out.println("id = 3, name: " + generatePropertyId(3, 12));
     }
 
-    private String generatePropertyId(int propertyIndex, int numberOfProperties) {
+    private static String generatePropertyId(int propertyIndex, int numberOfProperties) {
         int digits = String.valueOf(numberOfProperties).length();
         String numberAsString = String.valueOf(propertyIndex);
         int currentLength = numberAsString.length();

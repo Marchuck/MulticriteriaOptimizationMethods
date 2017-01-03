@@ -8,6 +8,7 @@ package pl.marczak.view;
  * 14 : 15
  */
 
+import MCDA.methods.outranking.ElectreTri;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,15 +18,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import rx.Observable;
-import rx.subjects.BehaviorSubject;
-import rx.subjects.Subject;
 
 import java.io.File;
 
 public class App extends Application implements AppCallbacks {
 
+    private static File initialDirectoryPath;
+
     public static void main(String[] args) {
+        initialDirectoryPath = new File("C://Users//Admin//Documents//semsetr2//opt_wlkryt//data");
         launch(args);
     }
 
@@ -40,6 +41,8 @@ public class App extends Application implements AppCallbacks {
     CheckBox firstLineCheckBox;
 
     Label separatorName;
+    Button editWeightsButton;
+
     TextField separator;
 
     TextArea filePreview;
@@ -48,9 +51,12 @@ public class App extends Application implements AppCallbacks {
 
     Button runVCDRSAButton;
 
-    Subject<ElectreBundle, ElectreBundle> lastPropertiesSubject = BehaviorSubject.create();
+//    Subject<ElectreBundle, ElectreBundle> lastPropertiesSubject = BehaviorSubject.create();
 
-    Subject<File, File> fileSubject = BehaviorSubject.create();
+//    Subject<File, File> fileSubject = BehaviorSubject.create();
+
+    File currentFile = null;
+    double[] currentWeights = null;
 
     @Override
     public void start(Stage primaryStage) {
@@ -60,34 +66,37 @@ public class App extends Application implements AppCallbacks {
 
         presenter = new AppPresenter(this);
 
-        Observable.combineLatest(RxViews.textChanges(separator),
-                RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
+//        Observable.combineLatest(RxViews.textChanges(separator),
+//                RxViews.checks(firstLineCheckBox), (lastSeparator, firstLineSkipped) -> {
+//
+//                    double[] weights = new double[15];
+//                    lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
+//                    return false;
+//                }).subscribe(boo -> {
+//        }, err -> System.out.println("Combine latest error: " + String.valueOf(err)));
 
-                    double[] weights = new double[15];
-                    lastPropertiesSubject.onNext(new ElectreBundle(lastSeparator, firstLineSkipped, weights));
-                    return false;
-                }).subscribe(boo -> {
-        }, err -> System.out.println("Combine latest error: " + String.valueOf(err)));
+        runElectreButton.setOnAction((event) -> {
+            if (currentFile == null) {
+                showSelectFileFirstDialog();
+                return;
+            }
+            String separatorValue = separator.getText();
+            boolean firstLineSkipped = firstLineCheckBox.isSelected();
 
-        Observable.combineLatest(fileSubject,
-                lastPropertiesSubject,
-                RxViews.clicks(runElectreButton),
-                (file, bundle, clicked) -> {
-                    presenter.onElectreTriChosen(file, bundle);
-                    return new Object();
-                })
-                .subscribe(a -> {
-                            System.out.println("done");
-                        },
-                        throwable -> {
-                            System.err.println("zip error: " + throwable.getMessage());
-                            throwable.printStackTrace();
-                        });
+            new ElectreResultsDialog(ElectreTri.demo());
+            // presenter.onElectreTriChosen(currentFile, new ElectreBundle(separatorValue, firstLineSkipped, currentWeights));
 
-        lastPropertiesSubject.onNext(new ElectreBundle(",", true, null));
-        firstLineCheckBox.selectedProperty().setValue(false);
-        separator.setText(",");
+        });
 
+
+    }
+
+    private void showSelectFileFirstDialog() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("WTF");
+        alert.setHeaderText("Cannot calculate");
+        alert.setContentText("Select input file first!");
+        alert.showAndWait();
     }
 
 
@@ -99,7 +108,7 @@ public class App extends Application implements AppCallbacks {
 
         addInputFileButton(primaryStage, box);
         addTextPreview(box);
-        addProgressBar(primaryStage, box);
+        addProgressBar(box);
         addSeparatorAndRunButton(box);
         root.setCenter(box);
 
@@ -131,6 +140,12 @@ public class App extends Application implements AppCallbacks {
 
         pane.getChildren().add(hbox);
 
+        editWeightsButton = new Button("edit weights");
+        editWeightsButton.setOnAction((value) -> {
+            invokeEditWeightsDialog();
+        });
+        pane.getChildren().add(editWeightsButton);
+
         runElectreButton = new Button("Run Electre");
         runVCDRSAButton = new Button("Run VCDRSA");
         pane.getChildren().add(runElectreButton);
@@ -138,7 +153,20 @@ public class App extends Application implements AppCallbacks {
 
     }
 
-    private void addProgressBar(Stage primaryStage, Pane parent) {
+    private void invokeEditWeightsDialog() {
+        if (currentFile == null) {
+            showError("Open file with data first!");
+        } else {
+            boolean skipFirstLine = firstLineCheckBox.isSelected();
+            String separatorValue = separator.getText();
+            String propertyNames[] = presenter.getPropertyNames(skipFirstLine, separatorValue);
+            new EditWeightsDialog(propertyNames, currentWeights).show(weights -> {
+                currentWeights = weights;
+            });
+        }
+    }
+
+    private void addProgressBar(Pane parent) {
         progressIndicator = new ProgressBar(0);
         progressIndicator.setVisible(false);
         progressIndicator.setMinSize(80, 20);
@@ -149,16 +177,21 @@ public class App extends Application implements AppCallbacks {
     private void addInputFileButton(Stage primaryStage, Pane parent) {
         fileChooseButton = new Button();
         fileChosenLabel = new Label("");
-        fileChooseButton.setText("Open file");
+        fileChooseButton.setText("...");
         fileChooseButton.setOnAction(event -> {
 
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open input data");
+            if (initialDirectoryPath != null) try {
+                fileChooser.setInitialDirectory(initialDirectoryPath);
+            } catch (Exception x) {
+
+            }
+            fileChooser.setTitle("Open file");
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
                 filePreview.setText(presenter.getFirstFewLines(file));
                 fileChosenLabel.setText(file.getAbsolutePath());
-                fileSubject.onNext(file);
+                currentFile = file;
             }
         });
         HBox hBox = new HBox();
@@ -204,11 +237,11 @@ public class App extends Application implements AppCallbacks {
     @Override
     public void showError(String errorMsg) {
         System.out.println("Error occurred");
-//        Alert alert = new Alert(Alert.AlertType.ERROR);
-//        alert.setTitle("WTF");
-//        alert.setHeaderText("Error occurred");
-//        alert.setContentText(errorMsg);
-//        alert.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("WTF");
+        alert.setHeaderText("Error occurred");
+        alert.setContentText(errorMsg);
+        alert.showAndWait();
     }
 
     @Override

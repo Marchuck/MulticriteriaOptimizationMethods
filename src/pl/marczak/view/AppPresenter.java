@@ -33,6 +33,7 @@ public class AppPresenter {
             appCallbacks.showProgress(value);
         }
     };
+    private String[] firstTwoLines;
 
     public AppPresenter(AppCallbacks connector) {
         this.appCallbacks = connector;
@@ -112,9 +113,9 @@ public class AppPresenter {
         profiles.add(alternatives.get(secondIndex));
         profiles.add(alternatives.get((alternatives.size() / 2)));
 
-        ElectreTri electreTri = new ElectreTri(alternatives, profiles);
-        electreTri.solve();
-        System.out.println("Result: " + MCDACommons.printCollection(electreTri.getResult()));
+//        ElectreTri electreTri = new ElectreTri(alternatives, profiles);
+//        electreTri.solve();
+//        System.out.println("Result: " + MCDACommons.printCollection(electreTri.getResult()));
     }
 
     public void onVCDRSAChosen(File file, Pair<String, Boolean> separatorAndFirstLineSkip) {
@@ -122,6 +123,24 @@ public class AppPresenter {
     }
 
     public String getFirstFewLines(File file) {
-        return DataReader.getAFewLinesOnly(file, 5);
+        String filePreview = DataReader.getAFewLinesOnly(file, 5);
+        String lines[] = filePreview.split("\n");
+        try {
+            firstTwoLines = new String[]{lines[0], lines[1]};
+        } catch (Exception outOfBoundsOrNPE) {
+            System.err.println(String.valueOf(outOfBoundsOrNPE));
+        }
+
+        return filePreview;
+    }
+
+    public String[] getPropertyNames(boolean skipFirstLine, String separator) {
+        if (skipFirstLine) {
+            return firstTwoLines[0].split(separator);
+        } else {
+            int count = firstTwoLines[0].split(separator).length;
+            return DataReader.getPropertyNamesByLazyImpl(null, separator, count);
+        }
+
     }
 }

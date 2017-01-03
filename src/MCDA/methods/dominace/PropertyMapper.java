@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * Created by Łukasz Marczak on 2017-01-02.
  */
+@Deprecated
 public class PropertyMapper {
 
     double j = 0.0;
