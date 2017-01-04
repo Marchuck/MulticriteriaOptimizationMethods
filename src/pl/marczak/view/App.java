@@ -142,7 +142,6 @@ public class App extends Application implements AppCallbacks {
         });
         pane.getChildren().add(runElectreButton);
         pane.getChildren().add(runVCDRSAButton);
-
     }
 
     private void invokeEditWeightsDialog() {
