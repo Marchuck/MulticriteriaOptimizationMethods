@@ -8,6 +8,7 @@ package pl.marczak.view;
  * 14 : 15
  */
 
+import MCDA.methods.dominace.StudentsData;
 import MCDA.methods.outranking.ElectreTri;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -18,6 +19,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pl.marczak.vc_drsa.DRSADominanceDialog;
+import pl.marczak.view.electreTri.ElectreResultsDialog;
 
 import java.io.File;
 
@@ -69,11 +72,8 @@ public class App extends Application implements AppCallbacks {
             }
             String separatorValue = separator.getText();
             boolean firstLineSkipped = firstLineCheckBox.isSelected();
-            ElectreTri electreTri = ElectreTri.demo();
-            electreTri.solve();
-            electreTri.solve();
-            electreTri.solve();
 
+            new ElectreResultsDialog(ElectreTri.demo()).show();
         });
 
 
@@ -99,7 +99,6 @@ public class App extends Application implements AppCallbacks {
         addProgressBar(box);
         addSeparatorAndRunButton(box);
 
-        new ElectreResultsDialog(box, ElectreTri.demo());
 
         root.setCenter(box);
 
@@ -138,7 +137,9 @@ public class App extends Application implements AppCallbacks {
 
         runElectreButton = new Button("Run Electre");
         runVCDRSAButton = new Button("Run VCDRSA");
-        runVCDRSAButton.setOnAction((x) -> showError("Not yet implemented!"));
+        runVCDRSAButton.setOnAction((x)-> {
+            new DRSADominanceDialog(new StudentsData().get());
+        });
         pane.getChildren().add(runElectreButton);
         pane.getChildren().add(runVCDRSAButton);
 

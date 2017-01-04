@@ -1,8 +1,8 @@
 package pl.marczak.view;
 
 import MCDA.definitions.*;
-import MCDA.methods.outranking.ElectreTri;
 import javafx.util.Pair;
+import pl.marczak.view.electreTri.ElectreBundle;
 
 import java.io.File;
 import java.util.ArrayList;

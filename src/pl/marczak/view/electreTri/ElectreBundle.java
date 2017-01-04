@@ -1,4 +1,4 @@
-package pl.marczak.view;
+package pl.marczak.view.electreTri;
 
 import java.util.Arrays;
 

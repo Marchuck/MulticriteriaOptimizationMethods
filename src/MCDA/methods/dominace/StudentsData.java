@@ -128,6 +128,9 @@ public class StudentsData {
         alternatives.add(alternativeS8);
 
 
+    }
 
+    public List<Alternative> get() {
+        return alternatives;
     }
 }

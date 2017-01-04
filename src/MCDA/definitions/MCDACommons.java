@@ -40,4 +40,24 @@ public class MCDACommons {
         return stringBuilder.append("]").toString();
     }
 
+    public interface PrintStrategy<T> {
+        String print(T t);
+    }
+
+    public static <T> String printCollectionWith(Collection<T> collection, PrintStrategy<T> strategy) {
+        if (isEmpty(collection)) return "[]";
+
+        StringBuilder stringBuilder = new StringBuilder();
+        Iterator<T> it = collection.iterator();
+        if (it.hasNext()) {
+            stringBuilder.append("[").append(strategy.print(it.next()));
+        }
+
+        while (it.hasNext()) {
+            stringBuilder.append(",").append(strategy.print(it.next()));
+        }
+
+        return stringBuilder.append("]").toString();
+    }
+
 }

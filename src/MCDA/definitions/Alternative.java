@@ -45,4 +45,8 @@ public class Alternative {
     public String toString() {
         return "{ name= " + name + ",value=" + value + ",ranking=" + ranking + " criteriaValues= " + MCDACommons.printCollection(criteriaValues) + " }";
     }
+
+    public String name(){
+        return name;
+    }
 }

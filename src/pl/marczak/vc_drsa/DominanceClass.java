@@ -21,6 +21,7 @@ public class DominanceClass {
     private List<DRSAObject> evaluatedObjects = new ArrayList<>();
 
 
+
     public DominanceClass(DRSAObject candidate) {
         this.candidate = candidate;
     }
