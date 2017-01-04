@@ -4,7 +4,11 @@ import MCDA.definitions.Alternative;
 import MCDA.definitions.CriterionValue;
 import MCDA.definitions.MCDACommons;
 import javafx.collections.FXCollections;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -44,6 +48,8 @@ public class DRSADominanceDialog {
 
         VBox content = new VBox();
         GridPane studentsPane = new GridPane();
+        studentsPane.setPadding(new Insets(10, 10, 10, 10));
+
 
         List<String> attributeNames = getAttributeNames(alternativeList);
         List<String> studentNames = getStudentsNames(alternativeList);
@@ -53,14 +59,13 @@ public class DRSADominanceDialog {
         content.getChildren().add(studentsPane);
 
         ChoiceBox<String> studentsChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(studentNames));
+
         studentsChoiceBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) -> currentStudent = studentNames.get(newValue.intValue()));
 
-//        ChoiceBox<String> attributesChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(attributeNames));
-//        attributesChoiceBox.getSelectionModel().selectedIndexProperty()
-//                .addListener((observable, oldValue, newValue) -> currentAttribute = attributeNames.get(newValue.intValue()));
-
         VBox attributesCheckBoxesLayout = new VBox();
+        attributesCheckBoxesLayout.setPadding(new Insets(10, 10, 10, 10));
+
         CheckBox[] boxes = new CheckBox[attributeNames.size()];
         for (int i = 0; i < boxes.length; i++) {
             boxes[i] = new CheckBox(attributeNames.get(i));
@@ -102,6 +107,7 @@ public class DRSADominanceDialog {
 
         HBox choiceBoxes = new HBox();
 
+        choiceBoxes.setPadding(new Insets(10, 10, 10, 10));
         choiceBoxes.getChildren().add(attributesCheckBoxesLayout);
         choiceBoxes.getChildren().add(studentsChoiceBox);
         choiceBoxes.getChildren().add(dominanceChoiceBox);
@@ -113,10 +119,10 @@ public class DRSADominanceDialog {
                     .ofAttributes(currentAttributesInUse)
                     .evaluate(currentDominanceType);
             VBox pane = new VBox();
-            pane.getChildren().addAll(new Label(currentStudent+" " + dom.dominanceType()));
+            pane.getChildren().addAll(new Label(currentStudent + " " + dom.dominanceType()));
             pane.getChildren().addAll(new Label(MCDACommons.printCollectionWith(alternativesDom, alternative -> alternative.name)));
 
-            BaseDialog resultDialog = new BaseDialog("Results", "", pane);
+            BaseDialog resultDialog = new BaseDialog("Results", MCDACommons.printCollection(currentAttributesInUse), pane);
 
         });
 
@@ -140,18 +146,32 @@ public class DRSADominanceDialog {
     }
 
     private void fillStudentsPane(GridPane studentsPane, List<Alternative> alternatives, List<String> attributeNames, List<String> names) {
+
         for (int i = 0; i < alternatives.size(); i++) {
+
+            Label label = new Label(names.get(i));
+            label.setPadding(new Insets(5, 5, 5, 5));
+            studentsPane.add(label, i + 1, 0);
+        }
+        int valuesSize = alternatives.get(0).getCriteria().size();
+
+        for (int j = 0; j < valuesSize; j++) {
+
+            Label label = new Label(attributeNames.get(j));
+            label.setPadding(new Insets(5, 5, 5, 5));
+            studentsPane.add(label, 0, j + 1);
+        }
+
+        for (int i = 0; i < alternatives.size(); i++) {
+
             Alternative alternative = alternatives.get(i);
             List<CriterionValue> values = alternative.getCriteria();
+
             for (int j = 0; j < values.size(); j++) {
-                if (i == 0 && j == 0) continue;
-                else if (i == 0) {
-                    studentsPane.add(new Label(attributeNames.get(j - 1)), 0, j);
-                } else if (j == 0) {
-                    studentsPane.add(new Label(names.get(i - 1)), i, 0);
-                } else {
-                    studentsPane.add(new Label(gradeValue(values.get(j).value)), i, j);
-                }
+
+                Label label = new Label(gradeValue(values.get(j).value));
+                label.setPadding(new Insets(5, 5, 5, 5));
+                studentsPane.add(label, i + 1, j + 1);
             }
         }
     }
