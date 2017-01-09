@@ -29,7 +29,7 @@ public class App extends Application implements AppCallbacks {
     private static File initialDirectoryPath;
 
     public static void main(String[] args) {
-        initialDirectoryPath = new File("C://Users//Admin//Documents//semsetr2//opt_wlkryt//data");
+       // initialDirectoryPath = new File("C://Users//Admin//Documents//semsetr2//opt_wlkryt//data");
         launch(args);
     }
 
