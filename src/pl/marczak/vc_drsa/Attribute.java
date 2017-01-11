@@ -1,7 +1,5 @@
 package pl.marczak.vc_drsa;
 
-import org.w3c.dom.Attr;
-
 /**
  * Created by Łukasz Marczak on 2016-12-28.
  */

@@ -16,7 +16,6 @@ public class DrsaTest {
          * example from page 548 (book 512)
          * from table 13.1.
          */
-
         List<DRSAObject> students = new ArrayList<>();
 
         List<Attribute> s1_attrs = new ArrayList<>();
@@ -92,8 +91,5 @@ public class DrsaTest {
         for (DRSAObject object : dominated) {
             System.out.println("S1 is dominated by " + object);
         }
-
     }
-
-
 }

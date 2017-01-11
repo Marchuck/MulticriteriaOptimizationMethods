@@ -4,6 +4,7 @@ package MCDA.definitions;
  * Created by Łukasz Marczak on 2016-12-30.
  */
 public class CriterionDefinition {
+    public static final CriterionDefinition EMPTY = new CriterionDefinition("undefined", OptimizationDirection.MINIMIZE, 0, null);
     public String name;
     public OptimizationDirection optimizationDirection;
     public double weight;

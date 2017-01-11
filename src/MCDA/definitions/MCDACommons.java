@@ -16,11 +16,11 @@ public class MCDACommons {
         return collection == null || collection.isEmpty();
     }
 
-    public static boolean anyEmpty(Collection<?>... collections) {
-        for (Collection<?> c : collections) {
-            if (c.isEmpty()) return true;
-        }
-        return false;
+    public static <T> boolean isEmpty(T[] collection) {
+        return collection == null || collection.length == (0);
+    }
+    public static  boolean isEmpty(double[] collection) {
+        return collection == null || collection.length == (0);
     }
 
 
@@ -38,6 +38,15 @@ public class MCDACommons {
         }
 
         return stringBuilder.append("]").toString();
+    }
+
+    public static String fillWithZeros(int fullLen, int lineNumber) {
+        int len = String.valueOf(lineNumber).length();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < fullLen - len; i++) sb.append("0");
+
+        return sb.append(lineNumber).toString();
     }
 
     public interface PrintStrategy<T> {

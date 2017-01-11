@@ -45,7 +45,7 @@ public class ElectreTri {
             return this;
         }
 
-        public Builder setQIndiscernibilityThresholds(double[] q) {
+        public Builder setIndiscernibilityThresholdsQ(double[] q) {
             this.q = q;
             return this;
         }
@@ -100,7 +100,7 @@ public class ElectreTri {
         ElectreTri electreTri = new ElectreTri.Builder()
                 .setAlternatives(alternatives)
                 .setProfiles(PP)
-                .setQIndiscernibilityThresholds(q)
+                .setIndiscernibilityThresholdsQ(q)
                 .setPreferenceThresholds(p)
                 .setVetos(v)
                 .setWeights(w)
