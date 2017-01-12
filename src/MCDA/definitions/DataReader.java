@@ -1,11 +1,7 @@
 package MCDA.definitions;
 
-import jdk.nashorn.internal.objects.NativeUint8Array;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOError;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,9 +49,13 @@ public class DataReader<T> {
     }
 
     public static void main(String[] args) {
-        DataReader a = new DataReader<String>(false);
-        System.out.println("Properties length: 12");
-        System.out.println("id = 3, name: " + generatePropertyId(3, 12));
+//        DataReader a = new DataReader<String>(false);
+//        System.out.println("Properties length: 12");
+//        System.out.println("id = 3, name: " + generatePropertyId(3, 12));
+        String items = DataReader.getAFewLinesOnly(new File("input/ticdata2000.txt"), 1);
+
+        System.out.println(">> " + items + ">>");
+        System.out.println("items length: " + items.split("\\s++").length);
     }
 
     private static String generatePropertyId(int propertyIndex, int numberOfProperties) {
@@ -94,7 +94,8 @@ public class DataReader<T> {
             }
 
         } catch (FileNotFoundException x) {
-
+            System.err.println(x.getMessage());
+            x.printStackTrace();
         } finally {
             if (input != null) input.close();
         }

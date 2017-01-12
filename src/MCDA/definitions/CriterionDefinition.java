@@ -1,5 +1,7 @@
 package MCDA.definitions;
 
+import java.util.Arrays;
+
 /**
  * Created by Łukasz Marczak on 2016-12-30.
  */
@@ -20,5 +22,31 @@ public class CriterionDefinition {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CriterionDefinition that = (CriterionDefinition) o;
+
+        if (Double.compare(that.weight, weight) != 0) return false;
+        if (!name.equals(that.name)) return false;
+        if (optimizationDirection != that.optimizationDirection) return false;
+        return Arrays.equals(thresholds, that.thresholds);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = name.hashCode();
+        result = 31 * result + optimizationDirection.hashCode();
+        temp = Double.doubleToLongBits(weight);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + Arrays.hashCode(thresholds);
+        return result;
     }
 }
