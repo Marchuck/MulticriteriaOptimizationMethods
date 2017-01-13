@@ -11,9 +11,9 @@ import static pl.marczak.adapters.IntegerResponse.isInteger;
  * @since 11 sty 2017.
  * 22 : 48
  */
-public class CarsAlternativeAdapter extends DefaultAlternativeAdapter {
+public class CarsAdapter extends DefaultAlternativeAdapter {
 
-    public CarsAlternativeAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
+    public CarsAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
         super(attributeNames, directions, weights, thresholds);
     }
 
@@ -25,6 +25,11 @@ public class CarsAlternativeAdapter extends DefaultAlternativeAdapter {
     @Override
     public String alternativePrefix() {
         return "car_";
+    }
+
+    @Override
+    public String name() {
+        return "Cars";
     }
 
     @Override
@@ -53,5 +58,4 @@ public class CarsAlternativeAdapter extends DefaultAlternativeAdapter {
             else return 1;
         }
     }
-
 }

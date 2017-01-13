@@ -1,5 +1,9 @@
 package pl.marczak.view;
 
+import MCDA.definitions.Alternative;
+
+import java.util.List;
+
 /**
  * Queues
  *
@@ -23,4 +27,6 @@ public interface AppCallbacks {
     void showError(String errorMsg);
 
     void showSomethingElse();
+
+    void showLoadedData(List<Alternative> alternativesParsed);
 }

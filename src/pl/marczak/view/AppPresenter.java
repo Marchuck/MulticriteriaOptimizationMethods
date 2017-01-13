@@ -2,10 +2,15 @@ package pl.marczak.view;
 
 import MCDA.definitions.*;
 import javafx.util.Pair;
+import pl.marczak.adapters.CarsAdapter;
+import pl.marczak.adapters.CreditsAdapter;
+import pl.marczak.adapters.DefaultAlternativeAdapter;
+import pl.marczak.adapters.InsuranceAdapter;
 import pl.marczak.view.electreTri.ElectreBundle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -142,5 +147,46 @@ public class AppPresenter {
             return DataReader.getPropertyNamesByLazyImpl(null, separator, count);
         }
 
+    }
+
+    public Collection<DefaultAlternativeAdapter> getAllConverters(String[] attributeNames,
+                                                                  OptimizationDirection[] directions,
+                                                                  double[] weights,
+                                                                  double[][] thresholds) {
+        List<DefaultAlternativeAdapter> converters = new ArrayList<>();
+        converters.add(new CarsAdapter(attributeNames, directions, weights, thresholds));
+        converters.add(new CreditsAdapter(attributeNames, directions, weights, thresholds));
+        converters.add(new InsuranceAdapter(attributeNames, directions, weights, thresholds));
+
+        return converters;
+    }
+
+    DefaultAlternativeAdapter match(String name) {
+        for (DefaultAlternativeAdapter adapter : getAllConverters(null, null, null, null)) {
+            if (adapter.name().equalsIgnoreCase(name)) return adapter;
+        }
+        return null;
+    }
+
+    public void prepare(File currentFile, String currentConverterName) {
+
+        DefaultAlternativeAdapter adapter = match(currentConverterName);
+        if (adapter != null) {
+
+            parseData(currentFile, adapter);
+
+        } else {
+            appCallbacks.showError("Cannot parse data");
+        }
+
+    }
+
+    private void parseData(File currentFile, DefaultAlternativeAdapter readStrategy) {
+
+        DataReader<Alternative> alternativeDataReader = new DataReader<>(false);
+
+        List<Alternative> alternativesParsed = alternativeDataReader.read(currentFile, readStrategy);
+
+        appCallbacks.showLoadedData(alternativesParsed);
     }
 }

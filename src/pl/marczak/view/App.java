@@ -1,16 +1,19 @@
 package pl.marczak.view;
 
 /**
- * Queues
+ * MCDA
  *
  * @author Lukasz Marczak
  * @since 30 gru 2016.
  * 14 : 15
  */
 
+import MCDA.definitions.Alternative;
 import MCDA.methods.dominace.StudentsData;
 import MCDA.methods.outranking.ElectreTri;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -21,15 +24,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pl.marczak.vc_drsa.DRSADominanceDialog;
 import pl.marczak.view.electreTri.ElectreResultsDialog;
+import pl.marczak.view.electreTri.SelectElectreTriInputDataDialog;
 
 import java.io.File;
+import java.util.List;
 
 public class App extends Application implements AppCallbacks {
 
     private static File initialDirectoryPath;
+    private String currentConverterName = "Cars";
 
     public static void main(String[] args) {
-       // initialDirectoryPath = new File("C://Users//Admin//Documents//semsetr2//opt_wlkryt//data");
+        // initialDirectoryPath = new File("C://Users//Admin//Documents//semsetr2//opt_wlkryt//data");
         launch(args);
     }
 
@@ -41,12 +47,13 @@ public class App extends Application implements AppCallbacks {
 
     Label fileChosenLabel;
 
-    CheckBox firstLineCheckBox;
+    //CheckBox firstLineCheckBox;
 
-    Label separatorName;
+//    Label separatorName;
+
     Button editWeightsButton;
 
-    TextField separator;
+//    TextField separator;
 
     TextArea filePreview;
 
@@ -55,6 +62,7 @@ public class App extends Application implements AppCallbacks {
     Button runVCDRSAButton;
 
     File currentFile = null;
+
     double[] currentWeights = null;
 
     @Override
@@ -70,8 +78,8 @@ public class App extends Application implements AppCallbacks {
                 showSelectFileFirstDialog();
                 return;
             }
-            String separatorValue = separator.getText();
-            boolean firstLineSkipped = firstLineCheckBox.isSelected();
+            presenter.prepare(currentFile, currentConverterName);
+
 
             new ElectreResultsDialog(ElectreTri.demo()).show();
         });
@@ -97,11 +105,9 @@ public class App extends Application implements AppCallbacks {
         addInputFileButton(primaryStage, box);
         addTextPreview(box);
         addProgressBar(box);
-        addSeparatorAndRunButton(box);
-
+        addConverterChoiceBox(box);
 
         root.setCenter(box);
-
 
         primaryStage.setTitle("Multicriteria optimization methods");
 
@@ -116,28 +122,27 @@ public class App extends Application implements AppCallbacks {
         box.getChildren().add(filePreview);
     }
 
-    private void addSeparatorAndRunButton(Pane pane) {
-
-        firstLineCheckBox = new CheckBox("skip first line");
-
-        pane.getChildren().add(firstLineCheckBox);
-
-        separatorName = new Label("separator");
-        separator = new TextField(",");
+    private void addConverterChoiceBox(Pane pane) {
 
         HBox hbox = new HBox();
-        hbox.getChildren().add(separatorName);
-        hbox.getChildren().add(separator);
+//        hbox.getChildren().add(separatorName);
 
+        ObservableList<String> list = FXCollections.observableArrayList("Cars", "Credits", "Credits with A", "Insurance");
+
+        ChoiceBox<String> choiceBox = new ChoiceBox<>(list);
+        choiceBox.valueProperty().setValue("Cars");
+        choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            currentConverterName = newValue;
+        });
         pane.getChildren().add(hbox);
 
         editWeightsButton = new Button("edit weights");
-        editWeightsButton.setOnAction((x) -> invokeEditWeightsDialog());
+        //editWeightsButton.setOnAction((x) -> invokeEditWeightsDialog());
         pane.getChildren().add(editWeightsButton);
 
         runElectreButton = new Button("Run Electre");
         runVCDRSAButton = new Button("Run VCDRSA");
-        runVCDRSAButton.setOnAction((x)-> {
+        runVCDRSAButton.setOnAction((x) -> {
             new DRSADominanceDialog(new StudentsData().get());
         });
         pane.getChildren().add(runElectreButton);
@@ -148,12 +153,12 @@ public class App extends Application implements AppCallbacks {
         if (currentFile == null) {
             showError("Open file with data first!");
         } else {
-            boolean skipFirstLine = firstLineCheckBox.isSelected();
-            String separatorValue = separator.getText();
-            String propertyNames[] = presenter.getPropertyNames(skipFirstLine, separatorValue);
-            new EditWeightsDialog(propertyNames, currentWeights).show(weights -> {
-                currentWeights = weights;
-            });
+//            boolean skipFirstLine = firstLineCheckBox.isSelected();
+//            String separatorValue = separator.getText();
+//            String propertyNames[] = presenter.getPropertyNames(skipFirstLine, separatorValue);
+//            new EditWeightsDialog(propertyNames, currentWeights).show(weights -> {
+//                currentWeights = weights;
+//            });
         }
     }
 
@@ -247,5 +252,12 @@ public class App extends Application implements AppCallbacks {
     @Override
     public void showSomethingElse() {
         System.out.println("SOMETHING ELSE");
+    }
+
+    @Override
+    public void showLoadedData(List<Alternative> alternativesParsed) {
+        Alternative first = alternativesParsed.get(0);
+        int size = first.getCriteria().size();
+        new SelectElectreTriInputDataDialog(size,alternativesParsed).show();
     }
 }

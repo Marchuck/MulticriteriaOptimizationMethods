@@ -15,6 +15,8 @@ public abstract class DefaultAlternativeAdapter implements DataReader.ReadStrate
 
     public abstract String alternativePrefix();
 
+    public abstract String name();
+
     protected String[] attributeNames;
     protected OptimizationDirection[] directions;
     protected double[] weights;

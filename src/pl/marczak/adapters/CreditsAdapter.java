@@ -13,10 +13,10 @@ import MCDA.definitions.OptimizationDirection;
  * @since 11 sty 2017.
  * 22 : 48
  */
-public class GermanAlternativeAdapter extends DefaultAlternativeAdapter {
+public class CreditsAdapter extends DefaultAlternativeAdapter {
 
 
-    public GermanAlternativeAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
+    public CreditsAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
         super(attributeNames, directions, weights, thresholds);
     }
 
@@ -28,6 +28,11 @@ public class GermanAlternativeAdapter extends DefaultAlternativeAdapter {
     @Override
     public String alternativePrefix() {
         return "credit_";
+    }
+
+    @Override
+    public String name() {
+        return "Credits";
     }
 
     @Override

@@ -1,6 +1,6 @@
 package pl.marczak.adapters;
 
-import MCDA.definitions.*;
+import MCDA.definitions.OptimizationDirection;
 
 /**
  * MulticriteriaOptimizationMethods
@@ -11,8 +11,13 @@ import MCDA.definitions.*;
  */
 public class InsuranceAdapter extends DefaultAlternativeAdapter {
 
-    public InsuranceAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
+    public InsuranceAdapter(String[] attributeNames, OptimizationDirection[] directions,
+                            double[] weights, double[][] thresholds) {
         super(attributeNames, directions, weights, thresholds);
+    }
+
+    public InsuranceAdapter() {
+        super(null, null, null, null);
     }
 
     @Override
@@ -23,6 +28,11 @@ public class InsuranceAdapter extends DefaultAlternativeAdapter {
     @Override
     public String alternativePrefix() {
         return "ins_";
+    }
+
+    @Override
+    public String name() {
+        return "Insurance";
     }
 
 }

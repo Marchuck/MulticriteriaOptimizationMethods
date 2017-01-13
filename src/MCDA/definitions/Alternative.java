@@ -43,10 +43,10 @@ public class Alternative {
 
     @Override
     public String toString() {
-        return "{ name= " + name + ",value=" + value + ",ranking=" + ranking + " criteriaValues= " + MCDACommons.printCollection(criteriaValues) + " }";
+        return "{ name= " + name + ", criteriaValues= " + MCDACommons.printCollection(criteriaValues) + " }";
     }
 
-    public String name(){
+    public String name() {
         return name;
     }
 
