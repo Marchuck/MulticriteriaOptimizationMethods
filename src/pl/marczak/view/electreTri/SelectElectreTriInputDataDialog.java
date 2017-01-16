@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import pl.marczak.adapters.DefaultAlternativeAdapter;
 
 import java.util.ArrayList;
@@ -29,13 +30,14 @@ public class SelectElectreTriInputDataDialog {
     List<Alternative> profiles = new ArrayList<>();
     double cutOff = 0.7;
 
+
     public SelectElectreTriInputDataDialog(int size, List<Alternative> alternatives, DefaultAlternativeAdapter readStrategy) {
         this.size = size;
         this.alternatives = alternatives;
         alternativeAdapter = readStrategy;
     }
 
-    public void show() {
+    public void show(Callback<ElectreTri.Result, Void> callback) {
         Dialog<ElectreTri.Result> dialog = new Dialog<>();
 
         ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -92,14 +94,17 @@ public class SelectElectreTriInputDataDialog {
         right.getChildren().add(cutofff);
 
 
-        GenericListRenderer<Alternative> profilesProxy = new GenericListRenderer<>(new GenericListRenderer.Callback<Alternative>() {
-            @Override
-            public Node recycle(Alternative item) {
-                Label label = new Label(item.toString());
-                return label;
-            }
-        });
+        GenericListRenderer<Alternative> profilesProxy = new GenericListRenderer<>(
+                new GenericListRenderer.Callback<Alternative>() {
+                    @Override
+                    public Node recycle(Alternative item) {
+                        Label label = new Label(item.toString());
+                        return label;
+                    }
+                });
+        HBox addProfileBtnLayout = new HBox();
         Button addProfileBtn = new Button("Add profile");
+        Button removeProfileBtn = new Button("Remove profile");
         addProfileBtn.setOnAction(c -> {
             new CreateProfileDialog(currentPropertyNames()).show(profile -> {
                 profilesProxy.add(profile);
@@ -107,10 +112,32 @@ public class SelectElectreTriInputDataDialog {
                 return null;
             });
         });
-        right.getChildren().add(addProfileBtn);
+        removeProfileBtn.setOnAction(i -> {
+            if (profiles.size() > 0) {
+                profilesProxy.removeLast();
+                profiles.remove(profiles.size() - 1);
+            }
+        });
 
+        addProfileBtnLayout.getChildren().addAll(addProfileBtn, removeProfileBtn);
+
+        right.getChildren().add(addProfileBtnLayout);
 
         profilesProxy.attach(right, profiles);
+
+        Random random = new Random();
+        int index1 = random.nextInt(alternatives.size());
+        int index2 = random.nextInt(alternatives.size());
+        int index3 = random.nextInt(alternatives.size());
+
+        profilesProxy.add(alternatives.get(index1));
+        profiles.add(alternatives.get(index1));
+
+        profilesProxy.add(alternatives.get(index2));
+        profiles.add(alternatives.get(index2));
+
+        profilesProxy.add(alternatives.get(index3));
+        profiles.add(alternatives.get(index3));
 
         rootView.getChildren().add(left);
         rootView.getChildren().add(right);
@@ -122,25 +149,28 @@ public class SelectElectreTriInputDataDialog {
                 for (int k = 0; k < alternatives.size(); k++) {
 
 
-                Alternative alternativeUpdated = alternatives.get(k);
+                    Alternative alternativeUpdated = alternatives.get(k);
 
-                double[] _q = parseFrom(q);
-                double[] _p = parseFrom(p);
-                double[] _v = parseFrom(v);
-                double[] _w = parseFrom(weights);
+                    double[] _q = parseFrom(q);
+                    double[] _p = parseFrom(p);
+                    double[] _v = parseFrom(v);
+                    double[] _w = parseFrom(weights);
 
-                for (int i = 0; i < size; i++) {
+                    for (int i = 0; i < size; i++) {
 
-                    alternativeUpdated.getCriteria().get(i).criterion.weight = _w[i];
-                    alternativeUpdated.getCriteria().get(i).criterion.thresholds = new double[]{_q[i], _p[i], _v[i]};
+                        alternativeUpdated.getCriteria().get(i).criterion.weight = _w[i];
+                        alternativeUpdated.getCriteria().get(i).criterion.thresholds = new double[]{_q[i], _p[i], _v[i]};
 
+                    }
+
+                    alternatives.set(k, alternativeUpdated);
                 }
-
-                alternatives.set(k, alternativeUpdated);
-            }
                 cutOff = Double.parseDouble(cutOffValue.getText());
-               // alternatives.remove(alternatives.size()-1);
-                return ElectreTriAdapter.adapt(alternatives, profiles, cutOff).solve();
+                // alternatives.remove(alternatives.size()-1);
+                if (callback != null) {
+                    ElectreTri.Result result = ElectreTriAdapter.adapt(alternatives, profiles, cutOff).solve();
+                    callback.call(result);
+                }
             }
             return null;
         });

@@ -115,7 +115,7 @@ public class ElectreTri {
         System.out.print(result);
     }
 
-    public static boolean debugEnabled = false;
+    public static boolean debugEnabled = true;
 
     public Result solve(double[][] alternatives, double[][] profiles, double[] q_indiscernibility_thresholds,
                         double[] preference_thresholds, double[] veto_thresholds, double[] weights, double threshold) {
@@ -211,13 +211,15 @@ public class ElectreTri {
                                 double alternatives[][], double[][] profiles, double[] q,
                                 double[] p, double[] v) {
 
+
         for (int ind = 0; ind < aRowLength; ind++) {
 
             double[][] perf = createMatrix(aColLength, ppColLength);
 
+
             for (int i = 0; i < aColLength; i++) {
                 for (int j = 0; j < ppColLength; j++) {
-                    System.out.println("i = "+i+", j = "+j);
+                    //  System.out.println("i = " + i + ", j = " + j);
                     perf[i][j] = profiles[ind][j] - alternatives[ind][i];
 
                     if (perf[i][j] < q[ind]) c[i][j][ind] = 1;

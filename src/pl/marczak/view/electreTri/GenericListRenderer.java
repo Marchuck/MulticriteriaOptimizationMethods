@@ -26,6 +26,7 @@ public class GenericListRenderer<ANY> {
         return anyObservableList.size();
     }
 
+
     @FunctionalInterface
     public interface Callback<ANY> {
         Node recycle(ANY item);
@@ -43,6 +44,13 @@ public class GenericListRenderer<ANY> {
     public void add(ANY any) {
         anyObservableList.add(any);
         anyViews.add(new Label(UUID.randomUUID().toString()));
+    }
+
+    public void removeLast() {
+        if (anyObservableList.size() > 0) {
+            anyObservableList.remove(anyObservableList.size() - 1);
+            anyViews.remove(anyViews.size() - 1);
+        }
     }
 
     public void attach(Pane parent, List<ANY> collection) {

@@ -10,7 +10,6 @@ package pl.marczak.view;
 
 import MCDA.definitions.Alternative;
 import MCDA.methods.dominace.StudentsData;
-import MCDA.methods.outranking.ElectreTri;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,8 +23,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pl.marczak.adapters.DefaultAlternativeAdapter;
 import pl.marczak.vc_drsa.DRSADominanceDialog;
-import pl.marczak.view.electreTri.ElectreResultsDialog;
 import pl.marczak.view.electreTri.SelectElectreTriInputDataDialog;
+import pl.marczak.view.electreTri.WrappedElectreTriResult;
 
 import java.io.File;
 import java.util.List;
@@ -80,9 +79,6 @@ public class App extends Application implements AppCallbacks {
                 return;
             }
             presenter.prepare(currentFile, currentConverterName);
-
-
-            new ElectreResultsDialog(ElectreTri.demo()).show();
         });
 
 
@@ -135,11 +131,12 @@ public class App extends Application implements AppCallbacks {
         choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             currentConverterName = newValue;
         });
+        hbox.getChildren().add(choiceBox);
         pane.getChildren().add(hbox);
 
-        editWeightsButton = new Button("edit weights");
+        //editWeightsButton = new Button("edit weights");
         //editWeightsButton.setOnAction((x) -> invokeEditWeightsDialog());
-        pane.getChildren().add(editWeightsButton);
+        //pane.getChildren().add(editWeightsButton);
 
         runElectreButton = new Button("Run Electre");
         runVCDRSAButton = new Button("Run VCDRSA");
@@ -148,19 +145,6 @@ public class App extends Application implements AppCallbacks {
         });
         pane.getChildren().add(runElectreButton);
         pane.getChildren().add(runVCDRSAButton);
-    }
-
-    private void invokeEditWeightsDialog() {
-        if (currentFile == null) {
-            showError("Open file with data first!");
-        } else {
-//            boolean skipFirstLine = firstLineCheckBox.isSelected();
-//            String separatorValue = separator.getText();
-//            String propertyNames[] = presenter.getPropertyNames(skipFirstLine, separatorValue);
-//            new EditWeightsDialog(propertyNames, currentWeights).show(weights -> {
-//                currentWeights = weights;
-//            });
-        }
     }
 
     private void addProgressBar(Pane parent) {
@@ -259,6 +243,12 @@ public class App extends Application implements AppCallbacks {
     public void showLoadedData(List<Alternative> alternativesParsed, DefaultAlternativeAdapter readStrategy) {
         Alternative first = alternativesParsed.get(0);
         int size = first.getCriteria().size();
-        new SelectElectreTriInputDataDialog(size,alternativesParsed,readStrategy).show();
+        new SelectElectreTriInputDataDialog(size, alternativesParsed, readStrategy)
+                .show(result -> {
+
+                    new WrappedElectreTriResult(result);
+
+                    return null;
+                });
     }
 }

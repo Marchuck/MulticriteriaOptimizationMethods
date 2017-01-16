@@ -22,7 +22,7 @@ public class ElectreTriAdapter {
      * @return
      */
     public static ElectreTri adapt(List<Alternative> alternatives, List<Alternative> profiles, double cut_off) {
-        System.out.println("received "+alternatives.size()+" alternatives, "+profiles.size()+" profiles, cut off is "+cut_off);
+        System.out.println("received " + alternatives.size() + " alternatives, " + profiles.size() + " profiles, cut off is " + cut_off);
         Alternative al = new Alternative("id" + String.valueOf(0));
         //alternatives.add(al);
 
@@ -35,7 +35,7 @@ public class ElectreTriAdapter {
         double[] _indiscernibilityThresholds = adaptThreshold(cv, 0);
         double[] _preferenceThresholds = adaptThreshold(cv, 1);
         double[] _vetos = adaptThreshold(cv, 2);
-        double[] _weights = adaptWeights(alternatives);
+        double[] _weights = adaptWeights(cv);
 
         ElectreTri electreTri = new ElectreTri.Builder()
                 .setAlternatives(_alternatives)
@@ -61,9 +61,8 @@ public class ElectreTriAdapter {
         return thresholds;
     }
 
-    static double[] adaptWeights(List<Alternative> alternatives) {
-        Alternative first = alternatives.get(0);
-        List<CriterionValue> criterionValues = first.getCriteria();
+    static double[] adaptWeights(List<CriterionValue> criterionValues) {
+
 
         double weights[] = new double[criterionValues.size()];
 
@@ -82,14 +81,23 @@ public class ElectreTriAdapter {
         double[][] adaptedAlternatives = new double[rows][cols];
         System.out.println("rows: " + rows + ", cols: " + cols);
         for (int i = 0; i < rows; i++) {
-            int size =a.get(i).getCriteria().size();
-            System.out.println(i+"_cols: "+size);
+            int size = a.get(i).getCriteria().size();
+            // System.out.println(i + "_cols: " + size);
+
             for (int j = 0; j < size; j++) {
                 adaptedAlternatives[i][j] = a.get(i).getCriteria().get(j).value;
             }
         }
 
-        return adaptedAlternatives;
+        return transposeMatrix(adaptedAlternatives);
+    }
+
+    public static double[][] transposeMatrix(double[][] m) {
+        double[][] temp = new double[m[0].length][m.length];
+        for (int i = 0; i < m.length; i++)
+            for (int j = 0; j < m[0].length; j++)
+                temp[j][i] = m[i][j];
+        return temp;
     }
 
 }

@@ -1,19 +1,15 @@
 package pl.marczak.view.electreTri;
 
 import MCDA.methods.outranking.ElectreTri;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import pl.marczak.view.ProfileViewHolder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,8 +19,12 @@ public class ElectreResultsDialog {
     ElectreTri.Result result;
 
     public ElectreResultsDialog(ElectreTri electreTri) {
+        this(electreTri.solve());
+    }
 
-        this.result = electreTri.solve();
+    public ElectreResultsDialog(ElectreTri.Result result) {
+        this.result = result;
+
     }
 
     public void show() {
