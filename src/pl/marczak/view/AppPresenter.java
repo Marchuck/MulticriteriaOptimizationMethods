@@ -2,10 +2,7 @@ package pl.marczak.view;
 
 import MCDA.definitions.*;
 import javafx.util.Pair;
-import pl.marczak.adapters.CarsAdapter;
-import pl.marczak.adapters.CreditsAdapter;
-import pl.marczak.adapters.DefaultAlternativeAdapter;
-import pl.marczak.adapters.InsuranceAdapter;
+import pl.marczak.adapters.*;
 import pl.marczak.view.electreTri.ElectreBundle;
 
 import java.io.File;
@@ -156,8 +153,8 @@ public class AppPresenter {
         List<DefaultAlternativeAdapter> converters = new ArrayList<>();
         converters.add(new CarsAdapter(attributeNames, directions, weights, thresholds));
         converters.add(new CreditsAdapter(attributeNames, directions, weights, thresholds));
+        converters.add(new CreditsWith_A_Adapter(attributeNames, directions, weights, thresholds));
         converters.add(new InsuranceAdapter(attributeNames, directions, weights, thresholds));
-
         return converters;
     }
 
@@ -186,7 +183,7 @@ public class AppPresenter {
         DataReader<Alternative> alternativeDataReader = new DataReader<>(false);
 
         List<Alternative> alternativesParsed = alternativeDataReader.read(currentFile, readStrategy);
-
-        appCallbacks.showLoadedData(alternativesParsed);
+        System.out.println("Alternatives parsed: "+alternativesParsed.size());
+        appCallbacks.showLoadedData(alternativesParsed,readStrategy);
     }
 }

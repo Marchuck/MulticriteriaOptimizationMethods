@@ -22,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pl.marczak.adapters.DefaultAlternativeAdapter;
 import pl.marczak.vc_drsa.DRSADominanceDialog;
 import pl.marczak.view.electreTri.ElectreResultsDialog;
 import pl.marczak.view.electreTri.SelectElectreTriInputDataDialog;
@@ -255,9 +256,9 @@ public class App extends Application implements AppCallbacks {
     }
 
     @Override
-    public void showLoadedData(List<Alternative> alternativesParsed) {
+    public void showLoadedData(List<Alternative> alternativesParsed, DefaultAlternativeAdapter readStrategy) {
         Alternative first = alternativesParsed.get(0);
         int size = first.getCriteria().size();
-        new SelectElectreTriInputDataDialog(size,alternativesParsed).show();
+        new SelectElectreTriInputDataDialog(size,alternativesParsed,readStrategy).show();
     }
 }

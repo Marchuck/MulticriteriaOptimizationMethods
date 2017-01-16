@@ -16,16 +16,15 @@ public class ElectreTriAdapter {
 
 
     /**
-     *
      * @param alternatives first element should contain needed parameters:
      * @param profiles
-     * @param cut_off threshold which decides if value should be grouped or not
+     * @param cut_off      threshold which decides if value should be grouped or not
      * @return
      */
     public static ElectreTri adapt(List<Alternative> alternatives, List<Alternative> profiles, double cut_off) {
-
+        System.out.println("received "+alternatives.size()+" alternatives, "+profiles.size()+" profiles, cut off is "+cut_off);
         Alternative al = new Alternative("id" + String.valueOf(0));
-        alternatives.add(al);
+        //alternatives.add(al);
 
         double[][] _alternatives = getAlternatives(alternatives);
         double[][] _profiles = getAlternatives(profiles);
@@ -81,9 +80,11 @@ public class ElectreTriAdapter {
         int rows = a.size();
 
         double[][] adaptedAlternatives = new double[rows][cols];
-
+        System.out.println("rows: " + rows + ", cols: " + cols);
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+            int size =a.get(i).getCriteria().size();
+            System.out.println(i+"_cols: "+size);
+            for (int j = 0; j < size; j++) {
                 adaptedAlternatives[i][j] = a.get(i).getCriteria().get(j).value;
             }
         }

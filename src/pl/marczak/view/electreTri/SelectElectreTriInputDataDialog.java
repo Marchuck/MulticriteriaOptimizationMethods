@@ -1,12 +1,14 @@
 package pl.marczak.view.electreTri;
 
 import MCDA.definitions.Alternative;
+import MCDA.definitions.DataReader;
 import MCDA.methods.outranking.ElectreTri;
 import MCDA.methods.outranking.ElectreTriAdapter;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import pl.marczak.adapters.DefaultAlternativeAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +24,15 @@ import java.util.Random;
  */
 public class SelectElectreTriInputDataDialog {
     final int size;
+    final DefaultAlternativeAdapter alternativeAdapter;
     final List<Alternative> alternatives;
     List<Alternative> profiles = new ArrayList<>();
     double cutOff = 0.7;
 
-    public SelectElectreTriInputDataDialog(int size, List<Alternative> alternatives) {
+    public SelectElectreTriInputDataDialog(int size, List<Alternative> alternatives, DefaultAlternativeAdapter readStrategy) {
         this.size = size;
         this.alternatives = alternatives;
+        alternativeAdapter = readStrategy;
     }
 
     public void show() {
@@ -82,6 +86,31 @@ public class SelectElectreTriInputDataDialog {
         right.getChildren().addAll(q_l, p_l, v_l, w_l);
 
 
+        HBox cutofff = new HBox();
+        TextField cutOffValue = new TextField("0.7");
+        cutofff.getChildren().addAll(new Label("Threshold"), cutOffValue);
+        right.getChildren().add(cutofff);
+
+
+        GenericListRenderer<Alternative> profilesProxy = new GenericListRenderer<>(new GenericListRenderer.Callback<Alternative>() {
+            @Override
+            public Node recycle(Alternative item) {
+                Label label = new Label(item.toString());
+                return label;
+            }
+        });
+        Button addProfileBtn = new Button("Add profile");
+        addProfileBtn.setOnAction(c -> {
+            new CreateProfileDialog(currentPropertyNames()).show(profile -> {
+                profilesProxy.add(profile);
+                profiles.add(profile);
+                return null;
+            });
+        });
+        right.getChildren().add(addProfileBtn);
+
+
+        profilesProxy.attach(right, profiles);
 
         rootView.getChildren().add(left);
         rootView.getChildren().add(right);
@@ -90,6 +119,27 @@ public class SelectElectreTriInputDataDialog {
 
         dialog.setResultConverter(param -> {
             if (param == okButton) {
+                for (int k = 0; k < alternatives.size(); k++) {
+
+
+                Alternative alternativeUpdated = alternatives.get(k);
+
+                double[] _q = parseFrom(q);
+                double[] _p = parseFrom(p);
+                double[] _v = parseFrom(v);
+                double[] _w = parseFrom(weights);
+
+                for (int i = 0; i < size; i++) {
+
+                    alternativeUpdated.getCriteria().get(i).criterion.weight = _w[i];
+                    alternativeUpdated.getCriteria().get(i).criterion.thresholds = new double[]{_q[i], _p[i], _v[i]};
+
+                }
+
+                alternatives.set(k, alternativeUpdated);
+            }
+                cutOff = Double.parseDouble(cutOffValue.getText());
+               // alternatives.remove(alternatives.size()-1);
                 return ElectreTriAdapter.adapt(alternatives, profiles, cutOff).solve();
             }
             return null;
@@ -99,13 +149,28 @@ public class SelectElectreTriInputDataDialog {
         _result.ifPresent(any -> dialog.close());
     }
 
+    private double[] parseFrom(TextField q) {
+        String[] vals = q.getText().split(";");
+        double d[] = new double[size];
+        for (int i = 0; i < size; i++) {
+            d[i] = Double.parseDouble(vals[i]);
+        }
+        return d;
+    }
+
+    private String[] currentPropertyNames() {
+
+        int count = alternatives.get(0).getCriteria().size();
+        return DataReader.getPropertyNamesByLazyImpl(null, null, count);
+    }
+
     Random randy = new Random();
 
     private String random(int size) {
         StringBuilder sb = new StringBuilder();
         sb.append(randy.nextInt(50));
         for (int i = 0; i < size - 1; i++) {
-            sb.append(",").append(randy.nextInt(50));
+            sb.append(";").append(randy.nextInt(50));
         }
         return sb.toString();
     }

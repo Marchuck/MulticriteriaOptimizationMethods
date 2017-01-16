@@ -1,6 +1,7 @@
 package pl.marczak.view;
 
 import MCDA.definitions.Alternative;
+import pl.marczak.adapters.DefaultAlternativeAdapter;
 
 import java.util.List;
 
@@ -28,5 +29,5 @@ public interface AppCallbacks {
 
     void showSomethingElse();
 
-    void showLoadedData(List<Alternative> alternativesParsed);
+    void showLoadedData(List<Alternative> alternativesParsed, DefaultAlternativeAdapter readStrategy);
 }

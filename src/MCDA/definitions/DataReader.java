@@ -1,5 +1,7 @@
 package MCDA.definitions;
 
+import com.sun.istack.internal.Nullable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -32,10 +34,12 @@ public class DataReader<T> {
         return propertyNames;
     }
 
-    public static String[] getPropertyNamesByLazyImpl(String firstLine, String separator, int numberOfProperties) {
+    public static String[] getPropertyNamesByLazyImpl(@Nullable String firstLine,
+                                                      @Nullable String separator,
+                                                      int numberOfProperties) {
 
         String arr[];
-        if (firstLine != null) {
+        if (firstLine != null && separator != null) {
             arr = firstLine.split(separator);
         } else {
             String[] properties = new String[numberOfProperties];

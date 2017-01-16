@@ -34,6 +34,7 @@ public abstract class DefaultAlternativeAdapter implements DataReader.ReadStrate
         Alternative alternative = new Alternative(alternativePrefix() + MCDACommons.fillWithZeros(5, lineNumber));
         String[] attrs = line.split(separator());
         fillAlternative(alternative, attrs);
+        System.out.println("Alternative " + lineNumber);
         return alternative;
     }
 

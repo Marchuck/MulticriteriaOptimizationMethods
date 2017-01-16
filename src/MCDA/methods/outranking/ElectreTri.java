@@ -210,13 +210,14 @@ public class ElectreTri {
     private void fillCDMatrices(double[][][] c, double[][][] d, int aRowLength, int aColLength, int ppColLength,
                                 double alternatives[][], double[][] profiles, double[] q,
                                 double[] p, double[] v) {
+
         for (int ind = 0; ind < aRowLength; ind++) {
 
             double[][] perf = createMatrix(aColLength, ppColLength);
 
             for (int i = 0; i < aColLength; i++) {
                 for (int j = 0; j < ppColLength; j++) {
-
+                    System.out.println("i = "+i+", j = "+j);
                     perf[i][j] = profiles[ind][j] - alternatives[ind][i];
 
                     if (perf[i][j] < q[ind]) c[i][j][ind] = 1;

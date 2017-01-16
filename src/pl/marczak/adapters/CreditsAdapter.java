@@ -5,7 +5,6 @@ import MCDA.definitions.CriterionDefinition;
 import MCDA.definitions.CriterionValue;
 import MCDA.definitions.OptimizationDirection;
 
-
 /**
  * MulticriteriaOptimizationMethods
  *
@@ -14,7 +13,6 @@ import MCDA.definitions.OptimizationDirection;
  * 22 : 48
  */
 public class CreditsAdapter extends DefaultAlternativeAdapter {
-
 
     public CreditsAdapter(String[] attributeNames, OptimizationDirection[] directions, double[] weights, double[][] thresholds) {
         super(attributeNames, directions, weights, thresholds);
