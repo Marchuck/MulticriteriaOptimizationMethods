@@ -31,6 +31,11 @@ public class CriterionValue {
     }
 
     @Override
+    public String toString() {
+        return "{" + value + '}';
+    }
+
+    @Override
     public int hashCode() {
         int result;
         long temp;

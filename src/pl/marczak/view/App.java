@@ -10,6 +10,7 @@ package pl.marczak.view;
 
 import MCDA.definitions.Alternative;
 import MCDA.methods.dominace.StudentsData;
+import MCDA.methods.outranking.ElectreTri;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,7 +52,7 @@ public class App extends Application implements AppCallbacks {
 
 //    Label separatorName;
 
-    Button editWeightsButton;
+    Button electreTriDemoBtn;
 
 //    TextField separator;
 
@@ -138,12 +139,17 @@ public class App extends Application implements AppCallbacks {
         //editWeightsButton.setOnAction((x) -> invokeEditWeightsDialog());
         //pane.getChildren().add(editWeightsButton);
 
-        runElectreButton = new Button("Run Electre");
+        runElectreButton = new Button("Run Electre Tri");
+        electreTriDemoBtn = new Button("Electre Tri DEMO");
+        electreTriDemoBtn.setOnAction(x -> {
+            new WrappedElectreTriResult(ElectreTri.demo().solve());
+        });
         runVCDRSAButton = new Button("Run VCDRSA");
         runVCDRSAButton.setOnAction((x) -> {
             new DRSADominanceDialog(new StudentsData().get());
         });
         pane.getChildren().add(runElectreButton);
+        pane.getChildren().add(electreTriDemoBtn);
         pane.getChildren().add(runVCDRSAButton);
     }
 

@@ -21,7 +21,12 @@ public class CriterionDefinition {
 
     @Override
     public String toString() {
-        return name;
+        if (name.equals("undefined")) return name;
+        else return "CriterionDefinition{" + "name='" + name + '\'' +
+                    ", optimizationDirection=" + optimizationDirection +
+                    ", weight=" + weight +
+                    ", thresholds=" + Arrays.toString(thresholds) +
+                    '}';
     }
 
     @Override
